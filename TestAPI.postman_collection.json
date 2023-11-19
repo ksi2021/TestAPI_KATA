@@ -1,0 +1,218 @@
+{
+	"info": {
+		"_postman_id": "0018d862-8cb6-44c1-9ad3-6a56de87fd07",
+		"name": "TestAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15128683"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"function generateString(length) {\r",
+							"    let result = '';\r",
+							"    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';\r",
+							"    const charactersLength = characters.length;\r",
+							"    let counter = 0;\r",
+							"    while (counter < length) {\r",
+							"      result += characters.charAt(Math.floor(Math.random() * charactersLength));\r",
+							"      counter += 1;\r",
+							"    }\r",
+							"    return result;\r",
+							"}\r",
+							"pm.globals.set(\"variable_key\", \"variable_value\");\r",
+							"const email = generateString(8) + \"@mail.ru\";\r",
+							"const login = generateString(8) ;\r",
+							"const password = generateString(8);\r",
+							"\r",
+							"pm.collectionVariables.set(\"login\", login);\r",
+							"pm.collectionVariables.set(\"email\", email);\r",
+							"pm.collectionVariables.set(\"password\", password);\r",
+							"\r",
+							"\r",
+							"console.log(pm.collectionVariables.get('password'), pm.collectionVariables.get('email'));\r",
+							"console.log(password,email)\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is ok, response is json\", function () {\r",
+							"    pm.response.to.be.ok; // проверка статуса\r",
+							"    pm.response.to.be.json; // проверка формата\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user\":{\r\n        \"username\": \"{{login}}\",\r\n        \"email\": \"{{email}}\",\r\n        \"password\": \"{{password}}\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://blog.kata.academy/api/users",
+					"protocol": "https",
+					"host": [
+						"blog",
+						"kata",
+						"academy"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is ok, response is json\", function () {\r",
+							"    pm.response.to.be.ok; // проверка статуса\r",
+							"    pm.response.to.be.json; // проверка формата\r",
+							"});\r",
+							"\r",
+							"\r",
+							"try {\r",
+							"    // сохраняем userId из json ответа в переменную окружения\r",
+							"    pm.collectionVariables.set(\"token\", pm.response.json().user.token);\r",
+							"    console.log(pm.collectionVariables.get('token'));\r",
+							"\r",
+							"} catch(e) {\r",
+							"    // выводим исключение в консоль\r",
+							"    console.log(e);\r",
+							"}\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(pm.collectionVariables.get('password'), pm.collectionVariables.get('email'));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user\":{\r\n        \"email\": \"{{email}}\",\r\n        \"password\": \"{{password}}\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://blog.kata.academy/api/users/login",
+					"protocol": "https",
+					"host": [
+						"blog",
+						"kata",
+						"academy"
+					],
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getUserInfo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status is ok, response is json\", function () {\r",
+							"    pm.response.to.be.ok; // проверка статуса\r",
+							"    pm.response.to.be.json; // проверка формата\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://blog.kata.academy/api/user",
+					"protocol": "https",
+					"host": [
+						"blog",
+						"kata",
+						"academy"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "login",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}
